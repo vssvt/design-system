@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;1,400&display=swap");
+
 :root {
   --x-font-family: Rubik;
   --x-font-weight-400: 400;
@@ -220,4 +223,29 @@ body {
   font-family: var(--x-font-family), sans-serif;
   color: var(--g-color-text-primary);
   background-color: var(--g-color-bg-neutral-lowest-default);
+}
+
+.material-symbols-rounded {
+  font-family: "Material Symbols Rounded", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: var(--g-text-m-font-size);
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  display: inline-block;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+}
+
+/* Іконки всередині кнопок не повинні успадковувати Rubik від form controls */
+button.material-symbols-rounded {
+  font-family: "Material Symbols Rounded", sans-serif;
 }
