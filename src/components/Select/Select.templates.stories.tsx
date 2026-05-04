@@ -38,8 +38,8 @@ export const Account: Story = {
           valueState="single"
           hasLeading
           leadingVisual={{ type: "flag", label: "🇪🇺" }}
-          primaryText="Euro Account"
-          secondaryText="Amount"
+          primaryText="261.94 EUR"
+          secondaryText="Main expenses"
           showFavorite
         />
       </Select>

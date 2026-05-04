@@ -30,35 +30,45 @@ export function SelectLabel({
 }
 
 function Leading(props: SelectValueProps) {
-  const { leadingVisual, hasLeading } = props;
-  if (!hasLeading || !leadingVisual) return null;
+  const { leadingVisual, hasLeading, template = "basic" } = props;
+  const forcedLeading = template === "account" || template === "card";
+  const fallbackLeading =
+    template === "account"
+      ? ({ type: "flag", label: "🇪🇺" } as const)
+      : template === "card"
+        ? ({ type: "card", icon: "credit_card" } as const)
+        : undefined;
+
+  const effectiveLeading = leadingVisual ?? fallbackLeading;
+  if (!effectiveLeading) return null;
+  if (!forcedLeading && !hasLeading) return null;
 
   let inner: ReactNode = null;
-  if (leadingVisual.type === "flag" && leadingVisual.label) {
+  if (effectiveLeading.type === "flag" && effectiveLeading.label) {
     inner = (
       <span className="g-select-value__leading-inner" aria-hidden>
-        {leadingVisual.label}
+        {effectiveLeading.label}
       </span>
     );
-  } else if (leadingVisual.type === "card" && leadingVisual.brand) {
+  } else if (effectiveLeading.type === "card" && effectiveLeading.brand) {
     const BrandIcon =
-      leadingVisual.brand === "visa"
+      effectiveLeading.brand === "visa"
         ? FaCcVisa
-        : leadingVisual.brand === "mastercard"
+        : effectiveLeading.brand === "mastercard"
           ? FaCcMastercard
-          : leadingVisual.brand === "paypal"
+          : effectiveLeading.brand === "paypal"
             ? FaCcPaypal
             : FaCcAmex;
     inner = (
       <BrandIcon className="g-select-value__payment-icon" aria-hidden />
     );
   } else if (
-    (leadingVisual.type === "material" || leadingVisual.type === "card") &&
-    leadingVisual.icon
+    (effectiveLeading.type === "material" || effectiveLeading.type === "card") &&
+    effectiveLeading.icon
   ) {
     inner = (
       <span className="g-select-value__leading-inner material-symbols-rounded" aria-hidden>
-        {leadingVisual.icon}
+        {effectiveLeading.icon}
       </span>
     );
   }
@@ -116,7 +126,11 @@ export function SelectValue(props: SelectValueProps) {
 
   const supportsSecondaryRow =
     template === "basic" || template === "account" || template === "card";
-  const showSecondaryRow = supportsSecondaryRow && Boolean(secondaryText);
+  const accountSecondaryText = secondaryText ?? "Euro account";
+  const accountPrimaryText = primaryText ?? "2000.500 EUR";
+  const resolvedSecondaryText = template === "account" ? accountSecondaryText : secondaryText;
+  const resolvedPrimaryText = template === "account" ? accountPrimaryText : primaryText;
+  const showSecondaryRow = supportsSecondaryRow && Boolean(resolvedSecondaryText);
   const showFavoriteIcon = (template === "account" || template === "card") && Boolean(showFavorite);
   const isAccountTemplate = template === "account";
 
@@ -127,12 +141,12 @@ export function SelectValue(props: SelectValueProps) {
         <div className="g-select-value__texts">
           {isAccountTemplate && showSecondaryRow ? (
             <div className="g-select-value__secondary-row">
-              {secondaryText ? (
-                <span className="g-select-value__secondary">{secondaryText}</span>
+              {resolvedSecondaryText ? (
+                <span className="g-select-value__secondary">{resolvedSecondaryText}</span>
               ) : null}
               {showFavoriteIcon ? (
                 <span
-                  className="g-select-value__favorite material-symbols-rounded"
+                  className="g-select-value__favorite g-select-value__favorite--filled material-symbols-rounded"
                   aria-label="Favorite"
                 >
                   star
@@ -140,17 +154,17 @@ export function SelectValue(props: SelectValueProps) {
               ) : null}
             </div>
           ) : null}
-          <div className="g-select-value__primary" title={primaryText}>
-            {primaryText}
+          <div className="g-select-value__primary" title={resolvedPrimaryText}>
+            {resolvedPrimaryText}
           </div>
           {!isAccountTemplate && showSecondaryRow ? (
             <div className="g-select-value__secondary-row">
-              {secondaryText ? (
-                <span className="g-select-value__secondary">{secondaryText}</span>
+              {resolvedSecondaryText ? (
+                <span className="g-select-value__secondary">{resolvedSecondaryText}</span>
               ) : null}
               {showFavoriteIcon ? (
                 <span
-                  className="g-select-value__favorite material-symbols-rounded"
+                  className="g-select-value__favorite g-select-value__favorite--filled material-symbols-rounded"
                   aria-label="Favorite"
                 >
                   star

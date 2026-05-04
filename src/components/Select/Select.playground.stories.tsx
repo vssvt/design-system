@@ -3,14 +3,14 @@ import { Select } from "./Select";
 import { SelectLabel, SelectValue } from "./Select.slots";
 import type { SelectValueTemplate, SelectVisualState } from "./Select.types";
 
+type PlaygroundState = SelectVisualState | "open";
 type PlaygroundValueState = "placeholder" | "template" | "multiple";
 
 interface PlaygroundArgs {
-  state: SelectVisualState;
+  state: PlaygroundState;
   readOnly: boolean;
   hasLabel: boolean;
   isClearable: boolean;
-  open: boolean;
   label: string;
   labelSize: "small" | "large";
   hasCount: boolean;
@@ -29,31 +29,57 @@ interface PlaygroundArgs {
 const meta = {
   title: "Components/Select/Playground",
   component: Select,
+  parameters: {
+    controls: {
+      sort: "none",
+      include: [
+        "state",
+        "readOnly",
+        "template",
+        "label",
+        "labelSize",
+        "hasCount",
+        "count",
+        "hasLabel",
+        "isClearable",
+        "valueState",
+        "primaryText",
+        "secondaryText",
+        "placeholder",
+        "hasLeading",
+        "addedToFav",
+        "helperText",
+        "errorText",
+      ],
+    },
+  },
   argTypes: {
     state: {
       control: "select",
-      options: ["default", "hover", "focus", "disabled", "error"],
+      options: ["default", "hover", "focus", "open", "disabled", "error"],
     },
     readOnly: { control: "boolean" },
-    hasLabel: { control: "boolean" },
+    template: { control: "select", options: ["basic", "account", "card"] },
+    valueState: { control: "select", options: ["placeholder", "template", "multiple"] },
     isClearable: { control: "boolean" },
-    open: { control: "boolean" },
+    hasLabel: { control: "boolean" },
     label: { control: "text" },
     labelSize: { control: "select", options: ["small", "large"] },
     hasCount: { control: "boolean" },
     count: { control: "number" },
-    valueState: {
-      control: "select",
-      options: ["placeholder", "template", "multiple"],
-    },
-    template: { control: "select", options: ["basic", "account", "card"] },
-    placeholder: { control: "text" },
     primaryText: { control: "text" },
     secondaryText: { control: "text" },
-    helperText: { control: "text" },
-    errorText: { control: "text" },
+    placeholder: { control: "text" },
     hasLeading: { control: "boolean" },
     addedToFav: { control: "boolean" },
+    helperText: { control: "text" },
+    errorText: { control: "text" },
+    open: { table: { disable: true } },
+    className: { table: { disable: true } },
+    "data-testid": { table: { disable: true } },
+    children: { table: { disable: true } },
+    onOpenChange: { table: { disable: true } },
+    onClear: { table: { disable: true } },
   },
   decorators: [
     (Story) => (
@@ -72,28 +98,46 @@ export const Playground: Story = {
     state: "default",
     readOnly: false,
     hasLabel: true,
-    isClearable: false,
-    open: false,
+    isClearable: true,
     label: "Label",
     labelSize: "small",
-    hasCount: false,
+    hasCount: true,
     count: 3,
-    valueState: "template",
-    template: "basic",
+    valueState: "multiple",
+    template: "card",
     placeholder: "Select an option",
     primaryText: "Selected value",
     secondaryText: "Secondary text",
     helperText: "",
-    errorText: "",
-    hasLeading: false,
-    addedToFav: false,
+    errorText: "Select another value",
+    hasLeading: true,
+    addedToFav: true,
   },
   render: (args) => {
-    const controlState: SelectVisualState = args.state;
-    const open = args.open;
-    const helperText = args.errorText ? undefined : args.helperText || undefined;
-    const errorText = args.errorText || undefined;
+    const controlState: SelectVisualState = args.state === "open" ? "default" : args.state;
+    const open = args.state === "open";
+    const isErrorState = controlState === "error";
+    const helperText = !isErrorState ? args.helperText || undefined : undefined;
+    const errorText = isErrorState ? args.errorText || undefined : undefined;
     const template = args.template;
+    const defaultPrimaryTextByTemplate: Record<SelectValueTemplate, string> = {
+      basic: "Selected value",
+      account: "261.94 EUR",
+      card: "Visa",
+    };
+    const defaultSecondaryTextByTemplate: Record<SelectValueTemplate, string> = {
+      basic: "Secondary text",
+      account: "Main expenses",
+      card: "•••• 4255",
+    };
+    const effectivePrimaryText =
+      args.primaryText === "Selected value" || args.primaryText.trim() === ""
+        ? defaultPrimaryTextByTemplate[template]
+        : args.primaryText;
+    const effectiveSecondaryText =
+      args.secondaryText === "Secondary text" || args.secondaryText.trim() === ""
+        ? defaultSecondaryTextByTemplate[template]
+        : args.secondaryText;
 
     const valueState =
       args.valueState === "placeholder"
@@ -101,6 +145,11 @@ export const Playground: Story = {
         : args.valueState === "multiple"
           ? "multiple"
           : "single";
+    const canClearValue = valueState !== "placeholder";
+    const effectiveIsClearable = canClearValue && args.isClearable;
+    const canUseCount = valueState === "multiple";
+    const effectiveHasCount = canUseCount && args.hasCount;
+    const effectiveCount = canUseCount ? args.count : undefined;
 
     const leadingVisual = !args.hasLeading
       ? undefined
@@ -108,12 +157,12 @@ export const Playground: Story = {
         ? { type: "flag" as const, label: "🇪🇺" }
         : template === "card"
           ? { type: "card" as const, brand: "visa" as const, icon: "credit_card" }
-          : { type: "material" as const, icon: "account_balance_wallet" };
+          : { type: "material" as const, icon: "star" };
 
     return (
       <>
         {args.hasLabel ? (
-          <SelectLabel size={args.labelSize} count={args.hasCount ? args.count : undefined}>
+          <SelectLabel size={args.labelSize} count={effectiveHasCount ? effectiveCount : undefined}>
             {args.label}
           </SelectLabel>
         ) : null}
@@ -122,7 +171,7 @@ export const Playground: Story = {
           open={open}
           readOnly={args.readOnly}
           hasLabel={args.hasLabel}
-          isClearable={args.isClearable}
+          isClearable={effectiveIsClearable}
           helperText={helperText}
           errorText={errorText}
           onClear={() => undefined}
@@ -131,8 +180,8 @@ export const Playground: Story = {
             valueState={valueState}
             template={template}
             placeholder={args.placeholder}
-            primaryText={args.primaryText}
-            secondaryText={args.secondaryText}
+            primaryText={effectivePrimaryText}
+            secondaryText={effectiveSecondaryText}
             hasLeading={args.hasLeading}
             leadingVisual={leadingVisual}
             showFavorite={args.addedToFav}

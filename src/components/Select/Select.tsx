@@ -28,7 +28,7 @@ export function Select({
   state = "default",
   open: openControlled,
   readOnly,
-  isClearable,
+  isClearable = true,
   helperText,
   errorText,
   onOpenChange,
