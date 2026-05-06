@@ -54,6 +54,18 @@ const caption: CSSProperties = {
   wordBreak: "break-word",
 };
 
+const guidelinesList: CSSProperties = {
+  margin: 0,
+  paddingLeft: "1.2rem",
+  display: "flex",
+  flexDirection: "column",
+  gap: "var(--g-space-4)",
+  maxWidth: "42rem",
+  font: "var(--g-text-s-font-weight) var(--g-text-s-font-size)/var(--g-text-s-line-height) var(--g-text-s-font-family)",
+  letterSpacing: "var(--g-text-s-letter-spacing)",
+  color: "var(--g-color-text-secondary)",
+};
+
 export const MaterialSymbolsRounded: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--g-space-16)" }}>
@@ -70,6 +82,24 @@ export const MaterialSymbolsRounded: Story = {
         <code style={caption}>material-symbols-rounded</code>, усередині — лігатура з іменем іконки (латиницею, як у
         каталозі Google).
       </p>
+      <ul style={guidelinesList}>
+        <li>
+          Base interactive icon size: <strong>20px</strong> (use for chevron, clear, leading material icon).
+        </li>
+        <li>
+          Accent icon size: <strong>20px</strong> (favorite star in Select).
+        </li>
+        <li>
+          Leading icon container size: <strong>40x40</strong> (`2.5rem`), circle background.
+        </li>
+        <li>
+          Default icon color in controls: <code style={caption}>--g-color-icon-secondary</code>.
+        </li>
+        <li>
+          Accent/favorite color: <code style={caption}>--g-color-icon-warning</code>, filled style via{" "}
+          <code style={caption}>font-variation-settings: "FILL" 1</code>.
+        </li>
+      </ul>
       <div style={grid}>
         {names.map((name) => (
           <div key={name} style={cell}>
