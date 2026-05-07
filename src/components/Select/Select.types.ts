@@ -56,4 +56,28 @@ export interface SelectProps extends BaseComponentProps {
   errorText?: string;
   onOpenChange?: (open: boolean) => void;
   onClear?: () => void;
+  options?: SelectOption[];
+  groups?: SelectGroup[];
+  value?: string | string[];
+  defaultValue?: string | string[];
+  onValueChange?: (value: string | string[]) => void;
+  isMultiple?: boolean;
+  placeholder?: string;
+}
+
+export interface SelectOption {
+  id: string;
+  value: string;
+  primary: string;
+  secondary?: string;
+  leading?: ReactNode;
+  favorite?: boolean;
+  disabled?: boolean;
+  groupId?: string;
+  template?: SelectValueTemplate;
+}
+
+export interface SelectGroup {
+  id: string;
+  label: string;
 }

@@ -1,29 +1,20 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Select } from "./Select";
-import { SelectLabel, SelectValue } from "./Select.slots";
-import type { SelectValueTemplate, SelectVisualState } from "./Select.types";
+import { SelectLabel } from "./Select.slots";
+import type { SelectGroup, SelectOption, SelectVisualState } from "./Select.types";
 
 type PlaygroundState = SelectVisualState | "open";
-type PlaygroundValueState = "placeholder" | "template" | "multiple";
-
 interface PlaygroundArgs {
   state: PlaygroundState;
   readOnly: boolean;
   hasLabel: boolean;
-  isClearable: boolean;
   label: string;
   labelSize: "small" | "large";
-  hasCount: boolean;
-  count: number;
-  valueState: PlaygroundValueState;
-  template: SelectValueTemplate;
   placeholder: string;
-  primaryText: string;
-  secondaryText: string;
   helperText: string;
   errorText: string;
-  hasLeading: boolean;
-  addedToFav: boolean;
+  isMultiple: boolean;
 }
 
 const meta = {
@@ -35,19 +26,11 @@ const meta = {
       include: [
         "state",
         "readOnly",
-        "template",
         "label",
         "labelSize",
-        "hasCount",
-        "count",
         "hasLabel",
-        "isClearable",
-        "valueState",
-        "primaryText",
-        "secondaryText",
         "placeholder",
-        "hasLeading",
-        "addedToFav",
+        "isMultiple",
         "helperText",
         "errorText",
       ],
@@ -59,19 +42,11 @@ const meta = {
       options: ["default", "hover", "focus", "open", "disabled", "error"],
     },
     readOnly: { control: "boolean" },
-    template: { control: "select", options: ["basic", "account", "card"] },
-    valueState: { control: "select", options: ["placeholder", "template", "multiple"] },
-    isClearable: { control: "boolean" },
     hasLabel: { control: "boolean" },
     label: { control: "text" },
     labelSize: { control: "select", options: ["small", "large"] },
-    hasCount: { control: "boolean" },
-    count: { control: "number" },
-    primaryText: { control: "text" },
-    secondaryText: { control: "text" },
     placeholder: { control: "text" },
-    hasLeading: { control: "boolean" },
-    addedToFav: { control: "boolean" },
+    isMultiple: { control: "boolean" },
     helperText: { control: "text" },
     errorText: { control: "text" },
     open: { table: { disable: true } },
@@ -98,95 +73,90 @@ export const Playground: Story = {
     state: "default",
     readOnly: false,
     hasLabel: true,
-    isClearable: true,
     label: "Label",
     labelSize: "small",
-    hasCount: true,
-    count: 3,
-    valueState: "multiple",
-    template: "card",
     placeholder: "Select an option",
-    primaryText: "Selected value",
-    secondaryText: "Secondary text",
     helperText: "",
     errorText: "Select another value",
-    hasLeading: true,
-    addedToFav: true,
+    isMultiple: true,
   },
   render: (args) => {
     const controlState: SelectVisualState = args.state === "open" ? "default" : args.state;
-    const open = args.state === "open";
     const isErrorState = controlState === "error";
     const helperText = !isErrorState ? args.helperText || undefined : undefined;
     const errorText = isErrorState ? args.errorText || undefined : undefined;
-    const template = args.template;
-    const defaultPrimaryTextByTemplate: Record<SelectValueTemplate, string> = {
-      basic: "Selected value",
-      account: "261.94 EUR",
-      card: "Visa",
-    };
-    const defaultSecondaryTextByTemplate: Record<SelectValueTemplate, string> = {
-      basic: "Secondary text",
-      account: "Main expenses",
-      card: "•••• 4255",
-    };
-    const effectivePrimaryText =
-      args.primaryText === "Selected value" || args.primaryText.trim() === ""
-        ? defaultPrimaryTextByTemplate[template]
-        : args.primaryText;
-    const effectiveSecondaryText =
-      args.secondaryText === "Secondary text" || args.secondaryText.trim() === ""
-        ? defaultSecondaryTextByTemplate[template]
-        : args.secondaryText;
-
-    const valueState =
-      args.valueState === "placeholder"
-        ? "placeholder"
-        : args.valueState === "multiple"
-          ? "multiple"
-          : "single";
-    const canClearValue = valueState !== "placeholder";
-    const effectiveIsClearable = canClearValue && args.isClearable;
-    const canUseCount = valueState === "multiple";
-    const effectiveHasCount = canUseCount && args.hasCount;
-    const effectiveCount = canUseCount ? args.count : undefined;
-
-    const leadingVisual = !args.hasLeading
-      ? undefined
-      : template === "account"
-        ? { type: "flag" as const, label: "🇪🇺" }
-        : template === "card"
-          ? { type: "card" as const, brand: "visa" as const, icon: "credit_card" }
-          : { type: "material" as const, icon: "star" };
+    const listboxOptions: SelectOption[] = [
+      {
+        id: "acc-1",
+        value: "eur-main",
+        primary: "1000 EUR",
+        secondary: "Main account",
+        leading: "🇪🇺",
+        favorite: true,
+        groupId: "personal",
+      },
+      {
+        id: "acc-2",
+        value: "usd-main",
+        primary: "240 USD",
+        secondary: "Savings account",
+        leading: "🇺🇸",
+        groupId: "personal",
+      },
+      {
+        id: "acc-3",
+        value: "pln-main",
+        primary: "700 PLN",
+        secondary: "Spending account",
+        leading: "🇵🇱",
+        groupId: "personal",
+      },
+      {
+        id: "acc-4",
+        value: "gbp-main",
+        primary: "120 GBP",
+        secondary: "Travel account",
+        leading: "🇬🇧",
+        groupId: "business",
+      },
+      {
+        id: "acc-5",
+        value: "chf-main",
+        primary: "560 CHF",
+        secondary: "Reserve account",
+        leading: "🇨🇭",
+        groupId: "business",
+      },
+    ];
+    const listboxGroups: SelectGroup[] = [
+      { id: "personal", label: "Personal accounts" },
+      { id: "business", label: "Business accounts" },
+    ];
+    const [listboxValue, setListboxValue] = useState<string | string[]>(args.isMultiple ? ["eur-main", "usd-main"] : "eur-main");
+    const selectedCount = Array.isArray(listboxValue) ? listboxValue.length : listboxValue ? 1 : 0;
 
     return (
       <>
         {args.hasLabel ? (
-          <SelectLabel size={args.labelSize} count={effectiveHasCount ? effectiveCount : undefined}>
+          <SelectLabel size={args.labelSize} {...(args.isMultiple ? { count: selectedCount } : {})}>
             {args.label}
           </SelectLabel>
         ) : null}
         <Select
           state={controlState}
-          open={open}
+          {...(args.state === "open" ? { open: true } : {})}
           readOnly={args.readOnly}
           hasLabel={args.hasLabel}
-          isClearable={effectiveIsClearable}
-          helperText={helperText}
-          errorText={errorText}
-          onClear={() => undefined}
+          placeholder={args.placeholder}
+          options={listboxOptions}
+          groups={listboxGroups}
+          isMultiple={args.isMultiple}
+          value={listboxValue}
+          onValueChange={(next) => setListboxValue(next)}
+          {...(helperText ? { helperText } : {})}
+          {...(errorText ? { errorText } : {})}
         >
-          <SelectValue
-            valueState={valueState}
-            template={template}
-            placeholder={args.placeholder}
-            primaryText={effectivePrimaryText}
-            secondaryText={effectiveSecondaryText}
-            hasLeading={args.hasLeading}
-            leadingVisual={leadingVisual}
-            showFavorite={args.addedToFav}
-            multipleValues={["Anna K.", "Bohdan S.", "Very long name that should truncate"]}
-          />
+          {null}
         </Select>
       </>
     );
