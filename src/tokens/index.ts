@@ -85,6 +85,10 @@ export const shadows = {
   elevation1: "var(--g-shadow-elevation-1)",
 };
 
+export const focus = {
+  ringWidth: "var(--g-focus-ring-width)",
+};
+
 export const typography = {
   heading: {
     xxl: {
@@ -181,5 +185,6 @@ export const tokens = {
   spacing,
   radii,
   shadows,
+  focus,
   typography,
 };

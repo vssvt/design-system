@@ -33,14 +33,15 @@
 }
 
 .g-select__control:focus-visible {
-  outline: none;
   border-color: var(--g-color-border-focus);
-  box-shadow: 0 0 0 1px var(--g-color-border-focus);
+  outline: var(--g-focus-ring-width) solid var(--g-color-border-focus);
+  outline-offset: 0;
 }
 
 .g-select[data-state="focus"] .g-select__control {
   border-color: var(--g-color-border-focus);
-  box-shadow: 0 0 0 1px var(--g-color-border-focus);
+  outline: var(--g-focus-ring-width) solid var(--g-color-border-focus);
+  outline-offset: 0;
 }
 
 .g-select[data-state="error"] .g-select__control {
