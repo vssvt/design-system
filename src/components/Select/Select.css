@@ -147,10 +147,10 @@
 
 .g-select-listbox {
   margin-top: var(--g-space-4);
-  border: 1px solid var(--g-color-border-low);
+  border: none;
   border-radius: var(--g-radius-xl);
   background: var(--g-color-bg-neutral-lowest-default);
-  box-shadow: 0 8px 24px rgba(25, 28, 33, 0.12);
+  box-shadow: var(--g-shadow-elevation-1);
   max-height: 20rem;
   overflow-y: auto;
 }
@@ -178,16 +178,15 @@
 
 .g-select-option[data-disabled="true"] {
   cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .g-select-option:not([data-disabled="true"]):hover,
 .g-select-option[data-active="true"] {
-  background: var(--g-color-bg-neutral-low-hover);
+  background: var(--g-color-bg-neutral-hover);
 }
 
 .g-select-option[data-selected="true"] {
-  background: var(--g-color-bg-brand-low-default);
+  background: var(--g-color-bg-neutral-lowest-active);
 }
 
 .g-select-option__content {
@@ -207,6 +206,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--g-color-icon-secondary);
 }
 
 .g-select-option__texts {
@@ -257,27 +257,38 @@
   font-family: "Material Symbols Rounded", sans-serif;
 }
 
+.g-select-option[data-disabled="true"] .g-select-option__primary,
+.g-select-option[data-disabled="true"] .g-select-option__secondary {
+  color: var(--g-color-text-disabled);
+}
+
+.g-select-option[data-disabled="true"] .g-select-option__leading,
+.g-select-option[data-disabled="true"] .g-select-option__checkbox {
+  color: var(--g-color-icon-disabled);
+}
+
 .g-select-label {
   display: flex;
   align-items: baseline;
   gap: var(--g-space-4);
-  color: var(--g-color-text-secondary);
 }
 
 .g-select-label--small {
   font: var(--g-text-s-compact-font-weight) var(--g-text-s-compact-font-size) /
     var(--g-text-s-compact-line-height) var(--g-text-s-compact-font-family);
   letter-spacing: var(--g-text-s-compact-letter-spacing);
+  color: var(--g-color-text-secondary);
 }
 
 .g-select-label--large {
   font: var(--g-text-m-font-weight) var(--g-text-m-font-size) /
     var(--g-text-m-line-height) var(--g-text-m-font-family);
   letter-spacing: var(--g-text-m-letter-spacing);
+  color: var(--g-color-text-primary);
 }
 
 .g-select-label__count {
-  color: var(--g-color-text-tertiary);
+  color: var(--g-color-text-brand);
 }
 
 .g-select-value {

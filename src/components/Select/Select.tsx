@@ -51,11 +51,13 @@ function buildMultiSummary(labels: string[]): string {
 }
 
 function renderOptionContent(option: SelectOption) {
+  const template = option.template ?? "basic";
+  const isAccountTemplate = template === "account";
   return (
     <div className="g-select-option__content">
       {option.leading ? <div className="g-select-option__leading">{option.leading}</div> : null}
       <div className="g-select-option__texts">
-        {option.secondary ? (
+        {isAccountTemplate && option.secondary ? (
           <div className="g-select-option__meta-row">
             <span className="g-select-option__secondary">{option.secondary}</span>
             {option.favorite ? (
@@ -66,6 +68,16 @@ function renderOptionContent(option: SelectOption) {
           </div>
         ) : null}
         <div className="g-select-option__primary">{option.primary}</div>
+        {!isAccountTemplate && option.secondary ? (
+          <div className="g-select-option__meta-row">
+            <span className="g-select-option__secondary">{option.secondary}</span>
+            {option.favorite ? (
+              <span className="g-select-option__favorite material-symbols-rounded" aria-hidden>
+                star
+              </span>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Select } from "./Select";
 import { SelectLabel } from "./Select.slots";
-import type { SelectGroup, SelectOption, SelectVisualState } from "./Select.types";
+import type { SelectGroup, SelectOption, SelectValueTemplate, SelectVisualState } from "./Select.types";
 
-type PlaygroundState = SelectVisualState | "open";
+type PlaygroundState = SelectVisualState | "open" | "active";
 interface PlaygroundArgs {
   state: PlaygroundState;
   readOnly: boolean;
@@ -15,6 +15,9 @@ interface PlaygroundArgs {
   helperText: string;
   errorText: string;
   isMultiple: boolean;
+  template: SelectValueTemplate;
+  hasLeading: boolean;
+  listMode: "grouped" | "flat";
 }
 
 const meta = {
@@ -31,6 +34,9 @@ const meta = {
         "hasLabel",
         "placeholder",
         "isMultiple",
+        "template",
+        "hasLeading",
+        "listMode",
         "helperText",
         "errorText",
       ],
@@ -39,7 +45,7 @@ const meta = {
   argTypes: {
     state: {
       control: "select",
-      options: ["default", "hover", "focus", "open", "disabled", "error"],
+      options: ["default", "hover", "focus", "active", "open", "disabled", "error"],
     },
     readOnly: { control: "boolean" },
     hasLabel: { control: "boolean" },
@@ -47,6 +53,9 @@ const meta = {
     labelSize: { control: "select", options: ["small", "large"] },
     placeholder: { control: "text" },
     isMultiple: { control: "boolean" },
+    template: { control: "select", options: ["basic", "account", "card"] },
+    hasLeading: { control: "boolean" },
+    listMode: { control: "select", options: ["grouped", "flat"] },
     helperText: { control: "text" },
     errorText: { control: "text" },
     open: { table: { disable: true } },
@@ -79,60 +88,171 @@ export const Playground: Story = {
     helperText: "",
     errorText: "Select another value",
     isMultiple: true,
+    template: "account",
+    hasLeading: false,
+    listMode: "grouped",
   },
   render: (args) => {
-    const controlState: SelectVisualState = args.state === "open" ? "default" : args.state;
+    const controlState: SelectVisualState = args.state === "open" || args.state === "active" ? "default" : args.state;
     const isErrorState = controlState === "error";
     const helperText = !isErrorState ? args.helperText || undefined : undefined;
     const errorText = isErrorState ? args.errorText || undefined : undefined;
-    const listboxOptions: SelectOption[] = [
-      {
-        id: "acc-1",
-        value: "eur-main",
-        primary: "1000 EUR",
-        secondary: "Main account",
-        leading: "🇪🇺",
-        favorite: true,
-        groupId: "personal",
+    const catalog: Record<
+      SelectValueTemplate,
+      { options: SelectOption[]; groups: SelectGroup[]; initialSingle: string; initialMultiple: string[] }
+    > = {
+      basic: {
+        options: [
+          {
+            id: "basic-1",
+            value: "invoice",
+            primary: "Invoice payment",
+            secondary: "Outgoing transfer",
+            template: "basic",
+            groupId: "recent",
+          },
+          {
+            id: "basic-2",
+            value: "salary",
+            primary: "Salary transfer",
+            secondary: "Incoming transfer",
+            template: "basic",
+            groupId: "recent",
+          },
+          {
+            id: "basic-3",
+            value: "utilities",
+            primary: "Utilities",
+            secondary: "Scheduled payment",
+            template: "basic",
+            groupId: "saved",
+          },
+          {
+            id: "basic-4",
+            value: "insurance",
+            primary: "Insurance",
+            secondary: "Monthly payment",
+            template: "basic",
+            groupId: "saved",
+          },
+        ],
+        groups: [
+          { id: "recent", label: "Recent" },
+          { id: "saved", label: "Saved templates" },
+        ],
+        initialSingle: "invoice",
+        initialMultiple: ["invoice", "utilities"],
       },
-      {
-        id: "acc-2",
-        value: "usd-main",
-        primary: "240 USD",
-        secondary: "Savings account",
-        leading: "🇺🇸",
-        groupId: "personal",
+      account: {
+        options: [
+          {
+            id: "acc-1",
+            value: "eur-main",
+            primary: "1000 EUR",
+            secondary: "Main account",
+            leading: "🇪🇺",
+            favorite: true,
+            template: "account",
+            groupId: "personal",
+          },
+          {
+            id: "acc-2",
+            value: "usd-main",
+            primary: "240 USD",
+            secondary: "Savings account",
+            leading: "🇺🇸",
+            template: "account",
+            groupId: "personal",
+          },
+          {
+            id: "acc-3",
+            value: "pln-main",
+            primary: "700 PLN",
+            secondary: "Spending account",
+            leading: "🇵🇱",
+            template: "account",
+            groupId: "personal",
+          },
+          {
+            id: "acc-4",
+            value: "gbp-main",
+            primary: "120 GBP",
+            secondary: "Travel account",
+            leading: "🇬🇧",
+            template: "account",
+            groupId: "business",
+          },
+          {
+            id: "acc-5",
+            value: "chf-main",
+            primary: "560 CHF",
+            secondary: "Reserve account",
+            leading: "🇨🇭",
+            template: "account",
+            groupId: "business",
+          },
+        ],
+        groups: [
+          { id: "personal", label: "Personal accounts" },
+          { id: "business", label: "Business accounts" },
+        ],
+        initialSingle: "eur-main",
+        initialMultiple: ["eur-main", "usd-main"],
       },
-      {
-        id: "acc-3",
-        value: "pln-main",
-        primary: "700 PLN",
-        secondary: "Spending account",
-        leading: "🇵🇱",
-        groupId: "personal",
+      card: {
+        options: [
+          {
+            id: "card-1",
+            value: "visa-4255",
+            primary: "Visa",
+            secondary: "•••• 4255",
+            leading: "💳",
+            template: "card",
+            groupId: "cards",
+          },
+          {
+            id: "card-2",
+            value: "mc-9921",
+            primary: "Mastercard",
+            secondary: "•••• 9921",
+            leading: "💳",
+            template: "card",
+            groupId: "cards",
+          },
+          {
+            id: "card-3",
+            value: "amex-1108",
+            primary: "Business card",
+            secondary: "•••• 1108",
+            leading: "💳",
+            template: "card",
+            groupId: "cards",
+          },
+        ],
+        groups: [{ id: "cards", label: "Cards" }],
+        initialSingle: "visa-4255",
+        initialMultiple: ["visa-4255", "mc-9921"],
       },
-      {
-        id: "acc-4",
-        value: "gbp-main",
-        primary: "120 GBP",
-        secondary: "Travel account",
-        leading: "🇬🇧",
-        groupId: "business",
-      },
-      {
-        id: "acc-5",
-        value: "chf-main",
-        primary: "560 CHF",
-        secondary: "Reserve account",
-        leading: "🇨🇭",
-        groupId: "business",
-      },
-    ];
-    const listboxGroups: SelectGroup[] = [
-      { id: "personal", label: "Personal accounts" },
-      { id: "business", label: "Business accounts" },
-    ];
-    const [listboxValue, setListboxValue] = useState<string | string[]>(args.isMultiple ? ["eur-main", "usd-main"] : "eur-main");
+    };
+    const activeTemplate = catalog[args.template];
+    const optionsForRender =
+      args.template === "basic"
+        ? activeTemplate.options.map((option) => ({
+            ...option,
+            leading: args.hasLeading ? "🧾" : undefined,
+          }))
+        : activeTemplate.options;
+    const [listboxValue, setListboxValue] = useState<string | string[]>(
+      args.isMultiple ? activeTemplate.initialMultiple : activeTemplate.initialSingle
+    );
+    const [templateKey, setTemplateKey] = useState(args.template);
+    const [multipleKey, setMultipleKey] = useState(args.isMultiple);
+    useEffect(() => {
+      if (templateKey === args.template && multipleKey === args.isMultiple) return;
+      setTemplateKey(args.template);
+      setMultipleKey(args.isMultiple);
+      setListboxValue(args.isMultiple ? activeTemplate.initialMultiple : activeTemplate.initialSingle);
+    }, [activeTemplate.initialMultiple, activeTemplate.initialSingle, args.isMultiple, args.template, multipleKey, templateKey]);
     const selectedCount = Array.isArray(listboxValue) ? listboxValue.length : listboxValue ? 1 : 0;
 
     return (
@@ -144,12 +264,13 @@ export const Playground: Story = {
         ) : null}
         <Select
           state={controlState}
-          {...(args.state === "open" ? { open: true } : {})}
+          {...(args.state === "open" || args.state === "active" ? { open: true } : {})}
           readOnly={args.readOnly}
           hasLabel={args.hasLabel}
+          {...(args.state === "active" ? { state: "focus" } : {})}
           placeholder={args.placeholder}
-          options={listboxOptions}
-          groups={listboxGroups}
+          options={optionsForRender}
+          groups={args.listMode === "grouped" ? activeTemplate.groups : []}
           isMultiple={args.isMultiple}
           value={listboxValue}
           onValueChange={(next) => setListboxValue(next)}
