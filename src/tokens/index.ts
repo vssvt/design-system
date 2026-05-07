@@ -85,8 +85,9 @@ export const shadows = {
   elevation1: "var(--g-shadow-elevation-1)",
 };
 
-export const focus = {
-  ringWidth: "var(--g-focus-ring-width)",
+export const borders = {
+  widthDefault: "var(--g-border-width-default)",
+  widthFocus: "var(--g-border-width-focus)",
 };
 
 export const typography = {
@@ -185,6 +186,6 @@ export const tokens = {
   spacing,
   radii,
   shadows,
-  focus,
+  borders,
   typography,
 };

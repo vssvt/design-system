@@ -11,7 +11,7 @@
   align-items: stretch;
   min-height: 72px;
   padding: 0 var(--g-space-12);
-  border-width: 1px;
+  border-width: var(--g-border-width-default);
   border-style: solid;
   border-radius: var(--g-radius-md);
   background: var(--g-color-bg-neutral-lowest-default);
@@ -34,13 +34,13 @@
 
 .g-select__control:focus-visible {
   border-color: var(--g-color-border-focus);
-  outline: var(--g-focus-ring-width) solid var(--g-color-border-focus);
+  outline: var(--g-border-width-focus) solid var(--g-color-border-focus);
   outline-offset: 0;
 }
 
 .g-select[data-state="focus"] .g-select__control {
   border-color: var(--g-color-border-focus);
-  outline: var(--g-focus-ring-width) solid var(--g-color-border-focus);
+  outline: var(--g-border-width-focus) solid var(--g-color-border-focus);
   outline-offset: 0;
 }
 
@@ -109,7 +109,7 @@
 }
 
 .g-select__icon-button:focus-visible {
-  outline: 1px solid var(--g-color-border-focus);
+  outline: var(--g-border-width-default) solid var(--g-color-border-focus);
   outline-offset: 2px;
 }
 
