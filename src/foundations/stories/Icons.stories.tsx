@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { IconStarFilled } from "../../components/icons";
 
 const meta = {
   title: "Foundations/Icons",
@@ -66,6 +67,13 @@ const guidelinesList: CSSProperties = {
   color: "var(--g-color-text-secondary)",
 };
 
+const sectionTitle: CSSProperties = {
+  margin: 0,
+  font: "var(--g-heading-xs-font-weight) var(--g-heading-xs-font-size)/var(--g-heading-xs-line-height) var(--g-heading-xs-font-family)",
+  letterSpacing: "var(--g-heading-xs-letter-spacing)",
+  color: "var(--g-color-text-primary)",
+};
+
 export const MaterialSymbolsRounded: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--g-space-16)" }}>
@@ -109,6 +117,13 @@ export const MaterialSymbolsRounded: Story = {
             <span style={caption}>{name}</span>
           </div>
         ))}
+      </div>
+      <h3 style={sectionTitle}>Custom Icons</h3>
+      <div style={grid}>
+        <div style={cell}>
+          <IconStarFilled style={{ width: "var(--x-font-size-20)", height: "var(--x-font-size-20)", color: "var(--g-color-icon-warning)" }} />
+          <span style={caption}>IconStarFilled</span>
+        </div>
       </div>
     </div>
   ),

@@ -52,8 +52,8 @@ export interface SelectProps extends BaseComponentProps {
   readOnly?: boolean;
   hasLabel?: boolean;
   isClearable?: boolean;
-  helperText?: string;
-  errorText?: string;
+  helperText?: ReactNode;
+  errorText?: ReactNode;
   onOpenChange?: (open: boolean) => void;
   onClear?: () => void;
   options?: SelectOption[];

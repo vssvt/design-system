@@ -12,6 +12,7 @@ interface PlaygroundArgs {
   label: string;
   labelSize: "small" | "large";
   placeholder: string;
+  showHelperText: boolean;
   helperText: string;
   errorText: string;
   isMultiple: boolean;
@@ -37,6 +38,7 @@ const meta = {
         "template",
         "hasLeading",
         "listMode",
+        "showHelperText",
         "helperText",
         "errorText",
       ],
@@ -52,6 +54,7 @@ const meta = {
     label: { control: "text" },
     labelSize: { control: "select", options: ["small", "large"] },
     placeholder: { control: "text" },
+    showHelperText: { control: "boolean" },
     isMultiple: { control: "boolean" },
     template: { control: "select", options: ["basic", "account", "card"] },
     hasLeading: { control: "boolean" },
@@ -85,6 +88,7 @@ export const Playground: Story = {
     label: "Label",
     labelSize: "small",
     placeholder: "Select an option",
+    showHelperText: true,
     helperText: "",
     errorText: "Select another value",
     isMultiple: true,
@@ -95,7 +99,7 @@ export const Playground: Story = {
   render: (args) => {
     const controlState: SelectVisualState = args.state === "open" || args.state === "active" ? "default" : args.state;
     const isErrorState = controlState === "error";
-    const helperText = !isErrorState ? args.helperText || undefined : undefined;
+    const helperText = args.showHelperText ? args.helperText || "Helper text" : undefined;
     const errorText = isErrorState ? args.errorText || undefined : undefined;
     const catalog: Record<
       SelectValueTemplate,

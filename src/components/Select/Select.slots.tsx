@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { FaCcAmex, FaCcMastercard, FaCcPaypal, FaCcVisa } from "react-icons/fa";
+import { IconStarFilled } from "../icons";
 import type { SelectLabelProps, SelectValueProps } from "./Select.types";
 import "./Select.css";
 
@@ -145,12 +146,7 @@ export function SelectValue(props: SelectValueProps) {
                 <span className="g-select-value__secondary">{resolvedSecondaryText}</span>
               ) : null}
               {showFavoriteIcon ? (
-                <span
-                  className="g-select-value__favorite g-select-value__favorite--filled material-symbols-rounded"
-                  aria-label="Favorite"
-                >
-                  star
-                </span>
+                <IconStarFilled className="g-select-value__favorite" aria-label="Favorite" />
               ) : null}
             </div>
           ) : null}
@@ -163,12 +159,7 @@ export function SelectValue(props: SelectValueProps) {
                 <span className="g-select-value__secondary">{resolvedSecondaryText}</span>
               ) : null}
               {showFavoriteIcon ? (
-                <span
-                  className="g-select-value__favorite g-select-value__favorite--filled material-symbols-rounded"
-                  aria-label="Favorite"
-                >
-                  star
-                </span>
+                <IconStarFilled className="g-select-value__favorite" aria-label="Favorite" />
               ) : null}
             </div>
           ) : null}

@@ -246,8 +246,9 @@
 
 .g-select-option__favorite {
   color: var(--g-color-icon-warning);
-  font-size: var(--x-font-size-20);
-  font-variation-settings: "FILL" 1;
+  width: var(--x-font-size-20);
+  height: var(--x-font-size-20);
+  display: inline-block;
 }
 
 .g-select-option__checkbox {
@@ -371,12 +372,9 @@
 .g-select-value__favorite {
   flex-shrink: 0;
   color: var(--g-color-icon-warning);
-  font-size: var(--x-font-size-20);
-  line-height: 1;
-}
-
-.g-select-value__favorite--filled {
-  font-variation-settings: "FILL" 1;
+  width: var(--x-font-size-20);
+  height: var(--x-font-size-20);
+  display: inline-block;
 }
 
 .g-select-value--placeholder .g-select-value__primary {

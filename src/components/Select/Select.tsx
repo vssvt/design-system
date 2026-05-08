@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { IconStarFilled } from "../icons";
 import type { SelectOption, SelectProps } from "./Select.types";
 import "./Select.css";
 
@@ -61,9 +62,7 @@ function renderOptionContent(option: SelectOption) {
           <div className="g-select-option__meta-row">
             <span className="g-select-option__secondary">{option.secondary}</span>
             {option.favorite ? (
-              <span className="g-select-option__favorite material-symbols-rounded" aria-hidden>
-                star
-              </span>
+              <IconStarFilled className="g-select-option__favorite" aria-hidden />
             ) : null}
           </div>
         ) : null}
@@ -72,9 +71,7 @@ function renderOptionContent(option: SelectOption) {
           <div className="g-select-option__meta-row">
             <span className="g-select-option__secondary">{option.secondary}</span>
             {option.favorite ? (
-              <span className="g-select-option__favorite material-symbols-rounded" aria-hidden>
-                star
-              </span>
+              <IconStarFilled className="g-select-option__favorite" aria-hidden />
             ) : null}
           </div>
         ) : null}
@@ -120,6 +117,8 @@ export function Select({
   const generatedId = useId();
   const controlId = `g-select-${generatedId}`;
   const listboxId = `${controlId}-listbox`;
+  const helperTextId = `${controlId}-helper`;
+  const errorTextId = `${controlId}-error`;
   const hasListbox = options.length > 0;
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const isControlled = openControlled !== undefined;
@@ -284,6 +283,11 @@ export function Select({
     [groups, options]
   );
   const shouldRenderDefaultValue = hasListbox && (children === null || children === undefined);
+  const hasHelperText = helperText !== undefined && helperText !== null && helperText !== "";
+  const hasErrorText = errorText !== undefined && errorText !== null && errorText !== "";
+  const describedBy = [hasErrorText ? errorTextId : null, hasHelperText ? helperTextId : null]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div ref={rootRef} className={rootClass} data-state={dataState} data-open={open ? "true" : "false"} data-testid={dataTestId}>
@@ -296,6 +300,8 @@ export function Select({
         aria-controls={hasListbox ? listboxId : undefined}
         aria-expanded={readOnly ? undefined : open}
         aria-activedescendant={open && hasListbox ? activeOptionId : undefined}
+        aria-describedby={describedBy || undefined}
+        aria-invalid={hasErrorText || undefined}
         className="g-select__control"
         onClick={onControlClick}
         onKeyDown={onControlKeyDown}
@@ -386,7 +392,16 @@ export function Select({
         </div>
       ) : null}
 
-      {errorText ? <p className="g-select__helper g-select__helper--error">{errorText}</p> : helperText ? <p className="g-select__helper">{helperText}</p> : null}
+      {hasErrorText ? (
+        <p id={errorTextId} className="g-select__helper g-select__helper--error">
+          {errorText}
+        </p>
+      ) : null}
+      {hasHelperText ? (
+        <p id={helperTextId} className="g-select__helper">
+          {helperText}
+        </p>
+      ) : null}
     </div>
   );
 }
