@@ -51,7 +51,19 @@ function buildMultiSummary(labels: string[]): string {
   return summary;
 }
 
-function renderOptionContent(option: SelectOption) {
+function renderOptionContent(option: SelectOption, size: SelectProps["size"], hasLeading: boolean) {
+  const isCompact = size === "compact";
+  if (isCompact) {
+    const showCompactLeading = hasLeading && Boolean(option.leading);
+    return (
+      <div className="g-select-option__content">
+        {showCompactLeading ? <div className="g-select-option__leading">{option.leading}</div> : null}
+        <div className="g-select-option__texts">
+          <div className="g-select-option__primary">{option.primary}</div>
+        </div>
+      </div>
+    );
+  }
   const template = option.template ?? "basic";
   const isAccountTemplate = template === "account";
   return (
@@ -80,22 +92,38 @@ function renderOptionContent(option: SelectOption) {
   );
 }
 
-function renderDefaultValue(options: SelectOption[], selectedValues: string[], isMultiple: boolean, placeholder: string) {
+function renderDefaultValue(
+  options: SelectOption[],
+  selectedValues: string[],
+  isMultiple: boolean,
+  placeholder: string,
+  size: SelectProps["size"],
+  hasLeading: boolean
+) {
+  const isCompact = size === "compact";
   if (selectedValues.length === 0) {
-    return <span className="g-select__placeholder">{placeholder}</span>;
+    return <span className={isCompact ? "g-select__placeholder g-select__placeholder--compact" : "g-select__placeholder"}>{placeholder}</span>;
   }
   const selected = options.filter((option) => selectedValues.includes(option.value));
   if (isMultiple) {
     const labels = selected.map((option) => option.primary);
-    return <span className="g-select__summary">{buildMultiSummary(labels)}</span>;
+    return <span className={isCompact ? "g-select__summary g-select__summary--compact" : "g-select__summary"}>{buildMultiSummary(labels)}</span>;
   }
   const first = selected[0];
-  if (!first) return <span className="g-select__placeholder">{placeholder}</span>;
-  return renderOptionContent(first);
+  if (!first) {
+    return (
+      <span className={isCompact ? "g-select__placeholder g-select__placeholder--compact" : "g-select__placeholder"}>
+        {placeholder}
+      </span>
+    );
+  }
+  return renderOptionContent(first, size, hasLeading);
 }
 
 export function Select({
   children,
+  size = "default",
+  hasLeading = false,
   state = "default",
   open: openControlled,
   readOnly,
@@ -290,7 +318,14 @@ export function Select({
     .join(" ");
 
   return (
-    <div ref={rootRef} className={rootClass} data-state={dataState} data-open={open ? "true" : "false"} data-testid={dataTestId}>
+    <div
+      ref={rootRef}
+      className={rootClass}
+      data-state={dataState}
+      data-size={size}
+      data-open={open ? "true" : "false"}
+      data-testid={dataTestId}
+    >
       <div
         role="combobox"
         id={controlId}
@@ -307,7 +342,7 @@ export function Select({
         onKeyDown={onControlKeyDown}
       >
         <div className="g-select__main">
-          {shouldRenderDefaultValue ? renderDefaultValue(options, selectedValues, isMultiple, placeholder) : children}
+          {shouldRenderDefaultValue ? renderDefaultValue(options, selectedValues, isMultiple, placeholder, size, hasLeading) : children}
         </div>
         {!readOnly ? (
           <div className="g-select__actions">
@@ -351,7 +386,7 @@ export function Select({
                     onMouseEnter={() => setActiveIndex(optionIndex)}
                     onClick={() => onSelectValue(option)}
                   >
-                    {renderOptionContent(option)}
+                    {renderOptionContent(option, size, hasLeading)}
                     {isMultiple ? (
                       <span className="g-select-option__checkbox material-symbols-rounded" aria-hidden>
                         {isSelected ? "check_box" : "check_box_outline_blank"}
@@ -380,7 +415,7 @@ export function Select({
                 onMouseEnter={() => setActiveIndex(optionIndex)}
                 onClick={() => onSelectValue(option)}
               >
-                {renderOptionContent(option)}
+                {renderOptionContent(option, size, hasLeading)}
                 {isMultiple ? (
                   <span className="g-select-option__checkbox material-symbols-rounded" aria-hidden>
                     {isSelected ? "check_box" : "check_box_outline_blank"}

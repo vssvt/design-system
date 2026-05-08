@@ -4,8 +4,9 @@ import { Select } from "./Select";
 import { SelectLabel } from "./Select.slots";
 import type { SelectGroup, SelectOption, SelectValueTemplate, SelectVisualState } from "./Select.types";
 
-type PlaygroundState = SelectVisualState | "open" | "active";
+type PlaygroundState = SelectVisualState | "open";
 interface PlaygroundArgs {
+  size: "default" | "compact";
   state: PlaygroundState;
   readOnly: boolean;
   hasLabel: boolean;
@@ -29,6 +30,7 @@ const meta = {
       sort: "none",
       include: [
         "state",
+        "size",
         "readOnly",
         "label",
         "labelSize",
@@ -47,12 +49,17 @@ const meta = {
   argTypes: {
     state: {
       control: "select",
-      options: ["default", "hover", "focus", "active", "open", "disabled", "error"],
+      options: ["default", "hover", "focus", "open", "disabled", "error"],
     },
+    size: { control: "select", options: ["default", "compact"] },
     readOnly: { control: "boolean" },
     hasLabel: { control: "boolean" },
     label: { control: "text" },
-    labelSize: { control: "select", options: ["small", "large"] },
+    labelSize: {
+      control: "select",
+      options: ["small", "large"],
+      if: { arg: "size", eq: "default" },
+    },
     placeholder: { control: "text" },
     showHelperText: { control: "boolean" },
     isMultiple: { control: "boolean" },
@@ -83,6 +90,7 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   args: {
     state: "default",
+    size: "default",
     readOnly: false,
     hasLabel: true,
     label: "Label",
@@ -97,7 +105,8 @@ export const Playground: Story = {
     listMode: "grouped",
   },
   render: (args) => {
-    const controlState: SelectVisualState = args.state === "open" || args.state === "active" ? "default" : args.state;
+    const controlState: SelectVisualState = args.state === "open" ? "default" : args.state;
+    const resolvedLabelSize = args.size === "compact" ? "small" : args.labelSize;
     const isErrorState = controlState === "error";
     const helperText = args.showHelperText ? args.helperText || "Helper text" : undefined;
     const errorText = isErrorState ? args.errorText || undefined : undefined;
@@ -262,16 +271,17 @@ export const Playground: Story = {
     return (
       <>
         {args.hasLabel ? (
-          <SelectLabel size={args.labelSize} {...(args.isMultiple ? { count: selectedCount } : {})}>
+          <SelectLabel size={resolvedLabelSize} {...(args.isMultiple ? { count: selectedCount } : {})}>
             {args.label}
           </SelectLabel>
         ) : null}
         <Select
+          size={args.size}
+          hasLeading={args.hasLeading}
           state={controlState}
-          {...(args.state === "open" || args.state === "active" ? { open: true } : {})}
+          {...(args.state === "open" ? { open: true } : {})}
           readOnly={args.readOnly}
           hasLabel={args.hasLabel}
-          {...(args.state === "active" ? { state: "focus" } : {})}
           placeholder={args.placeholder}
           options={optionsForRender}
           groups={args.listMode === "grouped" ? activeTemplate.groups : []}

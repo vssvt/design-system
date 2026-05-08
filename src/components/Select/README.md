@@ -19,9 +19,11 @@ Select is composed of:
   - Value - instance of `select/value`
   - Chevron icon
 
-## Properties
+## API
 
-### `state`
+### Select visual state
+
+`state` supports:
 
 - `default` - idle state
 - `hover` - pointer over trigger
@@ -29,25 +31,69 @@ Select is composed of:
 - `disabled` - non-interactive
 - `error` - validation error
 
-### `open`
+`readOnly` is a separate boolean prop and is not part of the `state` union.
 
-- `true` - dropdown is visible
-- `false` - dropdown is hidden
+### `SelectProps`
 
-### `readOnly`
+- `children: ReactNode` - content inside trigger; when listbox data is provided and `children` is empty, Select renders value content internally
+- `size?: "default" | "compact"` - visual density/height (`default` by default)
+- `state?: "default" | "hover" | "focus" | "disabled" | "error"` - visual state override (`default` by default)
+- `open?: boolean` - controlled open state
+- `readOnly?: boolean` - keeps value visible but blocks editing
+- `hasLabel?: boolean` - contract/story flag for label presence
+- `isClearable?: boolean` - enables clear action (`true` by default)
+- `helperText?: ReactNode` - helper text under control
+- `errorText?: ReactNode` - error text under control
+- `onOpenChange?: (open: boolean) => void` - open state callback
+- `onClear?: () => void` - clear action callback
+- `options?: SelectOption[]` - listbox options (`[]` by default)
+- `groups?: SelectGroup[]` - listbox groups (`[]` by default)
+- `value?: string | string[]` - controlled selected value(s)
+- `defaultValue?: string | string[]` - uncontrolled initial value(s)
+- `onValueChange?: (value: string | string[]) => void` - value change callback
+- `isMultiple?: boolean` - multiple selection mode (`false` by default)
+- `placeholder?: string` - placeholder in trigger (`Select...` by default)
+- `className?: string` - custom class from base props
+- `data-testid?: string` - testing attribute from base props
 
-- `true` - value is visible but cannot be changed
-- `false` - fully interactive
+### `SelectOption`
 
-### `hasLabel`
+- `id: string` - unique option id
+- `value: string` - option value used in selection model
+- `primary: string` - main text
+- `secondary?: string` - secondary text
+- `leading?: ReactNode` - leading visual/content
+- `favorite?: boolean` - favorite marker flag
+- `disabled?: boolean` - disables this option
+- `groupId?: string` - links option to group
+- `template?: "basic" | "account" | "card"` - option rendering template
 
-- `true` - label is displayed
-- `false` - label is hidden
+### `SelectGroup`
 
-### `isClearable`
+- `id: string` - group id
+- `label: string` - group heading text
 
-- `true` - allows clearing selected value
-- `false` - no clear action
+### `SelectValueProps`
+
+- `valueState?: "placeholder" | "single" | "multiple"` - value rendering mode (`single` by default)
+- `template?: "basic" | "account" | "card"` - value template (`basic` by default)
+- `primaryText?: string` - primary line text
+- `secondaryText?: string` - secondary line text
+- `placeholder?: string` - placeholder text (`Select…` by default)
+- `multipleValues?: string[]` - values used when `valueState="multiple"`
+- `showFavorite?: boolean` - shows favorite icon for account/card templates
+- `hasLeading?: boolean` - enables leading visual for basic template
+- `leadingVisual?: SelectValueLeadingVisual` - explicit leading visual config
+- `id?: string` - custom id on value root
+- `className?: string` - custom class from base props
+- `data-testid?: string` - testing attribute from base props
+
+### `SelectValueLeadingVisual`
+
+- `type: "material" | "flag" | "card"`
+- `icon?: string` - Material Symbols name for `material` or `card` fallback
+- `brand?: "visa" | "mastercard" | "paypal" | "amex"` - payment brand for card visual
+- `label?: string` - label (typically emoji flag)
 
 ## Trigger
 
@@ -121,6 +167,15 @@ Chevron:
 - focus persists while interacting
 - disabled blocks all interaction
 - error does not block interaction
+- readOnly blocks value changes and hides action icons
+
+### Value rendering rules
+
+- `valueState="multiple"` renders a comma-separated summary from `multipleValues`
+- `valueState="placeholder"` renders placeholder style/content
+- account template renders `secondary` above `primary`
+- basic/card templates render `primary` above `secondary`
+- account/card templates force leading visual; basic template requires `hasLeading` (or explicit leading config)
 
 ## Layout
 
@@ -155,3 +210,30 @@ Select uses:
 - Templates define content structure inside Value
 - Do not duplicate Value logic inside Select
 - Use semantic tokens for all visual styles
+
+## Domain wrappers pattern
+
+Use one base `Select` component for interaction logic and visual behavior.
+
+For repeated domain scenarios (for example country, currency, or phone country code):
+
+- create thin wrapper components (`CountrySelect`, `CurrencySelect`, `PhoneCountryCodeSelect`)
+- map domain entities to `SelectOption[]` inside wrappers
+- keep the base Select API and behavior unchanged
+
+This keeps one source of truth for keyboard/a11y behavior and avoids duplicated custom selects.
+
+## Storybook coverage strategy
+
+Use both story types:
+
+- `Playground` stories for interactive QA through controls
+- `Use Cases` stories for stable domain examples with fixed props and realistic data
+
+Recommended use-case stories:
+
+- Country select
+- Currency select
+- Phone country code select
+
+Each update in the PR branch should trigger a fresh preview deploy for validation.
