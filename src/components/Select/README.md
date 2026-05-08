@@ -235,3 +235,5 @@ Recommended use-case stories:
 - Country select
 - Currency select
 - Phone country code select
+
+Each update in the PR branch should trigger a fresh preview deploy for validation.
