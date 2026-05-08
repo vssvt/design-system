@@ -16,6 +16,8 @@
   --x-font-size-32: 32px;
   --x-font-size-36: 36px;
   --x-font-size-40: 40px;
+  --x-size-40: 40px;
+  --x-size-72: 72px;
   --x-line-height-16: 16px;
   --x-line-height-18: 18px;
   --x-line-height-20: 20px;
@@ -221,6 +223,15 @@
   --g-shadow-elevation-1: var(--x-shadow-100);
   --g-border-width-default: var(--x-border-width-1);
   --g-border-width-focus: var(--x-border-width-4);
+  --g-size-control-compact: var(--x-size-40);
+  --g-size-control-default: var(--x-size-72);
+
+  --g-component-select-height-compact: var(--g-size-control-compact);
+  --g-component-select-height-default: var(--g-size-control-default);
+  --g-component-select-padding-inline-compact: var(--g-space-12);
+  --g-component-select-list-row-height-compact: var(--g-size-control-compact);
+  --g-component-select-list-row-padding-inline-compact: var(--g-space-16);
+  --g-component-select-list-group-height-compact: var(--g-size-control-compact);
 }
 
 * {

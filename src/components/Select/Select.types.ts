@@ -6,8 +6,7 @@ export type SelectVisualState =
   | "hover"
   | "focus"
   | "disabled"
-  | "error"
-  | "readOnly";
+  | "error";
 
 export interface SelectLabelProps extends BaseComponentProps {
   children: ReactNode;
@@ -46,6 +45,8 @@ export interface SelectValueProps extends BaseComponentProps {
 
 export interface SelectProps extends BaseComponentProps {
   children: ReactNode;
+  size?: "default" | "compact";
+  hasLeading?: boolean;
   state?: SelectVisualState;
   /** Controlled open state for the dropdown surface (stories / future menu). */
   open?: boolean;

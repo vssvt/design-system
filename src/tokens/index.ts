@@ -90,6 +90,22 @@ export const borders = {
   widthFocus: "var(--g-border-width-focus)",
 };
 
+export const sizes = {
+  controlCompact: "var(--g-size-control-compact)",
+  controlDefault: "var(--g-size-control-default)",
+};
+
+export const components = {
+  select: {
+    heightCompact: "var(--g-component-select-height-compact)",
+    heightDefault: "var(--g-component-select-height-default)",
+    paddingInlineCompact: "var(--g-component-select-padding-inline-compact)",
+    listRowHeightCompact: "var(--g-component-select-list-row-height-compact)",
+    listRowPaddingInlineCompact: "var(--g-component-select-list-row-padding-inline-compact)",
+    listGroupHeightCompact: "var(--g-component-select-list-group-height-compact)",
+  },
+};
+
 export const typography = {
   heading: {
     xxl: {
@@ -187,5 +203,7 @@ export const tokens = {
   radii,
   shadows,
   borders,
+  sizes,
+  components,
   typography,
 };
