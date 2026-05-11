@@ -37,7 +37,6 @@ const cardBase: CSSProperties = {
   minHeight: "7rem",
   borderRadius: "var(--g-radius-md)",
   background: "var(--g-color-bg-neutral-lowest-default)",
-  border: "1px solid var(--g-color-border-default)",
   padding: "var(--g-space-16)",
   display: "flex",
   flexDirection: "column",
