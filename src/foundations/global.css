@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;1,400&display=swap");
+
 :root {
   --x-font-family: Rubik;
   --x-font-weight-400: 400;
@@ -13,6 +16,8 @@
   --x-font-size-32: 32px;
   --x-font-size-36: 36px;
   --x-font-size-40: 40px;
+  --x-size-40: 40px;
+  --x-size-72: 72px;
   --x-line-height-16: 16px;
   --x-line-height-18: 18px;
   --x-line-height-20: 20px;
@@ -135,6 +140,7 @@
   --g-color-icon-primary: var(--x-black);
   --g-color-icon-secondary: var(--x-gray-400);
   --g-color-icon-tertiary: var(--x-gray-200);
+  --g-color-icon-disabled: var(--x-gray-400);
   --g-color-icon-brand: var(--x-purple-500);
   --g-color-icon-danger: var(--x-red-700);
   --g-color-icon-warning: var(--x-orange-700);
@@ -149,6 +155,7 @@
   --g-color-border-disabled: var(--x-gray-100);
 
   --g-color-bg-neutral-lowest-default: var(--x-white);
+  --g-color-bg-neutral-hover: var(--x-gray-60);
   --g-color-bg-neutral-lowest-hover: var(--x-gray-60);
   --g-color-bg-neutral-lowest-active: var(--x-gray-30);
   --g-color-bg-neutral-lower-default: var(--x-gray-30);
@@ -199,6 +206,11 @@
   --x-radius-20: 20px;
   --x-radius-pill: 9999px;
   --x-radius-circle: 50%;
+  --x-shadow-100: 0 0 8px 0 hsla(216, 7%, 85%, 0.7);
+  --x-shadow-200: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --x-border-width-1: 1px;
+  --x-border-width-2: 2px;
+  --x-border-width-4: 4px;
 
   --g-radius-none: var(--x-radius-none);
   --g-radius-xs: var(--x-radius-4);
@@ -209,6 +221,19 @@
   --g-radius-2xl: var(--x-radius-20);
   --g-radius-pill: var(--x-radius-pill);
   --g-radius-circle: var(--x-radius-circle);
+  --g-shadow-elevation-1: var(--x-shadow-100);
+  --g-shadow-elevation-2: var(--x-shadow-200);
+  --g-border-width-default: var(--x-border-width-1);
+  --g-border-width-focus: var(--x-border-width-4);
+  --g-size-control-compact: var(--x-size-40);
+  --g-size-control-default: var(--x-size-72);
+
+  --g-component-select-height-compact: var(--g-size-control-compact);
+  --g-component-select-height-default: var(--g-size-control-default);
+  --g-component-select-padding-inline-compact: var(--g-space-12);
+  --g-component-select-list-row-height-compact: var(--g-size-control-compact);
+  --g-component-select-list-row-padding-inline-compact: var(--g-space-16);
+  --g-component-select-list-group-height-compact: var(--g-size-control-compact);
 }
 
 * {
@@ -220,4 +245,29 @@ body {
   font-family: var(--x-font-family), sans-serif;
   color: var(--g-color-text-primary);
   background-color: var(--g-color-bg-neutral-lowest-default);
+}
+
+.material-symbols-rounded {
+  font-family: "Material Symbols Rounded", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: var(--g-text-m-font-size);
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  display: inline-block;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+}
+
+/* Іконки всередині кнопок не повинні успадковувати Rubik від form controls */
+button.material-symbols-rounded {
+  font-family: "Material Symbols Rounded", sans-serif;
 }

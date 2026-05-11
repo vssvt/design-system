@@ -1,7 +1,18 @@
-import type { Preview } from '@storybook/react-vite'
+import type { Preview } from '@storybook/react-vite';
+import '../src/foundations/global.css';
 
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: {
+        order: [
+          'Foundations',
+          ['Colors', 'Typography', 'Spacing', 'Radius', 'Icons'],
+          'Components',
+          ['Select', ['Playground', 'States', 'Templates', 'Value', 'Label', 'Behavior']],
+        ],
+      },
+    },
     controls: {
       matchers: {
        color: /(background|color)$/i,

@@ -14,6 +14,7 @@ export const colors = {
     primary: "var(--g-color-icon-primary)",
     secondary: "var(--g-color-icon-secondary)",
     tertiary: "var(--g-color-icon-tertiary)",
+    disabled: "var(--g-color-icon-disabled)",
     brand: "var(--g-color-icon-brand)",
     danger: "var(--g-color-icon-danger)",
     warning: "var(--g-color-icon-warning)",
@@ -29,6 +30,7 @@ export const colors = {
     disabled: "var(--g-color-border-disabled)",
   },
   background: {
+    neutralHover: "var(--g-color-bg-neutral-hover)",
     neutralLowestDefault: "var(--g-color-bg-neutral-lowest-default)",
     neutralLowestHover: "var(--g-color-bg-neutral-lowest-hover)",
     neutralLowestActive: "var(--g-color-bg-neutral-lowest-active)",
@@ -77,6 +79,32 @@ export const radii = {
   "2xl": "var(--g-radius-2xl)",
   pill: "var(--g-radius-pill)",
   circle: "var(--g-radius-circle)",
+};
+
+export const shadows = {
+  elevation1: "var(--g-shadow-elevation-1)",
+  elevation2: "var(--g-shadow-elevation-2)",
+};
+
+export const borders = {
+  widthDefault: "var(--g-border-width-default)",
+  widthFocus: "var(--g-border-width-focus)",
+};
+
+export const sizes = {
+  controlCompact: "var(--g-size-control-compact)",
+  controlDefault: "var(--g-size-control-default)",
+};
+
+export const components = {
+  select: {
+    heightCompact: "var(--g-component-select-height-compact)",
+    heightDefault: "var(--g-component-select-height-default)",
+    paddingInlineCompact: "var(--g-component-select-padding-inline-compact)",
+    listRowHeightCompact: "var(--g-component-select-list-row-height-compact)",
+    listRowPaddingInlineCompact: "var(--g-component-select-list-row-padding-inline-compact)",
+    listGroupHeightCompact: "var(--g-component-select-list-group-height-compact)",
+  },
 };
 
 export const typography = {
@@ -174,5 +202,9 @@ export const tokens = {
   colors,
   spacing,
   radii,
+  shadows,
+  borders,
+  sizes,
+  components,
   typography,
 };
