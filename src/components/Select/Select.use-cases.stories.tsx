@@ -131,3 +131,25 @@ export const CountryCompactMultiple: Story = {
     );
   },
 };
+
+export const CountryCompactSearchable: Story = {
+  render: () => {
+    const [value, setValue] = useState("UA");
+    return (
+      <>
+        <SelectLabel size="small">Country</SelectLabel>
+        <Select
+          size="compact"
+          hasLeading
+          isSearchable
+          options={countryOptions}
+          value={value}
+          onValueChange={(next) => setValue(String(next))}
+          placeholder="Select country"
+        >
+          {null}
+        </Select>
+      </>
+    );
+  },
+};

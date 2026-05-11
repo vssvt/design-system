@@ -9,6 +9,13 @@ const caption: CSSProperties = {
   fontFamily: "ui-monospace, monospace",
 };
 
+const tokenName: CSSProperties = {
+  margin: 0,
+  font: "var(--g-text-s-compact-font-weight) var(--g-text-s-compact-font-size)/var(--g-text-s-compact-line-height) var(--g-text-s-compact-font-family)",
+  letterSpacing: "var(--g-text-s-compact-letter-spacing)",
+  color: "var(--g-color-text-secondary)",
+};
+
 function resolveCssValue(value: string | number | undefined) {
   if (value === undefined) return "";
   if (typeof value === "number") return String(value);
@@ -55,7 +62,23 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const sampleUA = "Rubik · Heading & text 0123456789";
+const headingSamples: Record<keyof typeof typography.heading, string> = {
+  xxl: "Heading XXL sample",
+  xl: "Heading XL sample",
+  l: "Heading L sample",
+  lAccent: "Heading L Accent sample",
+  m: "Heading M sample",
+  s: "Heading S sample",
+  sAccent: "Heading S Accent sample",
+  xs: "Heading XS sample",
+};
+
+const textSamples: Record<keyof typeof typography.text, string> = {
+  m: "Text M sample. The quick brown fox jumps over 12345.",
+  s: "Text S sample. The quick brown fox jumps over 12345.",
+  sCompact: "Text S Compact sample. The quick brown fox jumps over 12345.",
+  xs: "Text XS sample. The quick brown fox jumps over 12345.",
+};
 
 export const Semantic: Story = {
   render: () => (
@@ -86,20 +109,18 @@ export const Semantic: Story = {
             <div
               key={String(key)}
               style={{
-                display: "grid",
-                gridTemplateColumns: "1fr minmax(12rem, auto)",
-                gap: "var(--g-space-16)",
-                alignItems: "baseline",
-                paddingBottom: "var(--g-space-12)",
-                borderBottom: "1px solid var(--g-color-border-low)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--g-space-8)",
+                padding: "var(--g-space-12)",
+                border: "1px solid var(--g-color-border-low)",
+                borderRadius: "var(--g-radius-md)",
+                background: "var(--g-color-bg-neutral-lowest-default)",
               }}
             >
-              <p style={{ margin: 0, ...style, color: "var(--g-color-text-primary)" }}>{sampleUA}</p>
-              <code style={caption}>
-                --{prefix}-font-*
-                <br />
-                {values}
-              </code>
+              <p style={tokenName}>{String(key)}</p>
+              <p style={{ margin: 0, ...style, color: "var(--g-color-text-primary)" }}>{headingSamples[key]}</p>
+              <code style={caption}>--{prefix}-font-* · {values}</code>
             </div>
           );
         })}
@@ -124,20 +145,18 @@ export const Semantic: Story = {
             <div
               key={String(key)}
               style={{
-                display: "grid",
-                gridTemplateColumns: "1fr minmax(12rem, auto)",
-                gap: "var(--g-space-16)",
-                alignItems: "baseline",
-                paddingBottom: "var(--g-space-12)",
-                borderBottom: "1px solid var(--g-color-border-low)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--g-space-8)",
+                padding: "var(--g-space-12)",
+                border: "1px solid var(--g-color-border-low)",
+                borderRadius: "var(--g-radius-md)",
+                background: "var(--g-color-bg-neutral-lowest-default)",
               }}
             >
-              <p style={{ margin: 0, ...style, color: "var(--g-color-text-primary)" }}>{sampleUA}</p>
-              <code style={caption}>
-                --{prefix}-font-*
-                <br />
-                {values}
-              </code>
+              <p style={tokenName}>{String(key)}</p>
+              <p style={{ margin: 0, ...style, color: "var(--g-color-text-primary)" }}>{textSamples[key]}</p>
+              <code style={caption}>--{prefix}-font-* · {values}</code>
             </div>
           );
         })}

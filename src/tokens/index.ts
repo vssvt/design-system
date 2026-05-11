@@ -83,6 +83,7 @@ export const radii = {
 
 export const shadows = {
   elevation1: "var(--g-shadow-elevation-1)",
+  elevation2: "var(--g-shadow-elevation-2)",
 };
 
 export const borders = {

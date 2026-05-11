@@ -7,6 +7,7 @@ import type { SelectGroup, SelectOption, SelectValueTemplate, SelectVisualState 
 type PlaygroundState = SelectVisualState | "open";
 interface PlaygroundArgs {
   size: "default" | "compact";
+  isSearchable: boolean;
   state: PlaygroundState;
   readOnly: boolean;
   hasLabel: boolean;
@@ -31,6 +32,7 @@ const meta = {
       include: [
         "state",
         "size",
+        "isSearchable",
         "readOnly",
         "label",
         "labelSize",
@@ -52,6 +54,7 @@ const meta = {
       options: ["default", "hover", "focus", "open", "disabled", "error"],
     },
     size: { control: "select", options: ["default", "compact"] },
+    isSearchable: { control: "boolean" },
     readOnly: { control: "boolean" },
     hasLabel: { control: "boolean" },
     label: { control: "text" },
@@ -91,6 +94,7 @@ export const Playground: Story = {
   args: {
     state: "default",
     size: "default",
+    isSearchable: false,
     readOnly: false,
     hasLabel: true,
     label: "Label",
@@ -278,6 +282,7 @@ export const Playground: Story = {
         <Select
           size={args.size}
           hasLeading={args.hasLeading}
+          isSearchable={args.isSearchable}
           state={controlState}
           {...(args.state === "open" ? { open: true } : {})}
           readOnly={args.readOnly}

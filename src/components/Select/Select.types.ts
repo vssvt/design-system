@@ -64,6 +64,9 @@ export interface SelectProps extends BaseComponentProps {
   onValueChange?: (value: string | string[]) => void;
   isMultiple?: boolean;
   placeholder?: string;
+  isSearchable?: boolean;
+  searchPlaceholder?: string;
+  searchEmptyText?: string;
 }
 
 export interface SelectOption {

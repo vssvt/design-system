@@ -206,7 +206,8 @@
   --x-radius-20: 20px;
   --x-radius-pill: 9999px;
   --x-radius-circle: 50%;
-  --x-shadow-100: 0 0 8px 0 rgba(200, 203, 208, 0.5);
+  --x-shadow-100: 0 0 8px 0 hsla(216, 7%, 85%, 0.7);
+  --x-shadow-200: 0 4px 12px rgba(0, 0, 0, 0.1);
   --x-border-width-1: 1px;
   --x-border-width-2: 2px;
   --x-border-width-4: 4px;
@@ -221,6 +222,7 @@
   --g-radius-pill: var(--x-radius-pill);
   --g-radius-circle: var(--x-radius-circle);
   --g-shadow-elevation-1: var(--x-shadow-100);
+  --g-shadow-elevation-2: var(--x-shadow-200);
   --g-border-width-default: var(--x-border-width-1);
   --g-border-width-focus: var(--x-border-width-4);
   --g-size-control-compact: var(--x-size-40);

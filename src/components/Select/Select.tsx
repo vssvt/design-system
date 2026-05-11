@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { IconStarFilled } from "../icons";
+import { SearchInput } from "../SearchInput";
 import type { SelectOption, SelectProps } from "./Select.types";
 import "./Select.css";
 
@@ -32,6 +33,16 @@ function findBoundaryEnabledIndex(options: SelectOption[], fromStart: boolean): 
   const match = ordered.find((option) => !option.disabled);
   if (!match) return -1;
   return options.findIndex((option) => option.id === match.id);
+}
+
+function filterOptions(options: SelectOption[], query: string): SelectOption[] {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) return options;
+  return options.filter((option) => {
+    const primary = option.primary.toLowerCase();
+    const secondary = option.secondary?.toLowerCase() ?? "";
+    return primary.includes(normalized) || secondary.includes(normalized);
+  });
 }
 
 function buildMultiSummary(labels: string[]): string {
@@ -139,6 +150,9 @@ export function Select({
   onValueChange,
   isMultiple = false,
   placeholder = "Select...",
+  isSearchable = false,
+  searchPlaceholder = "Search",
+  searchEmptyText = "No results found",
   className,
   "data-testid": dataTestId,
 }: SelectProps) {
@@ -168,6 +182,8 @@ export function Select({
     [uncontrolledValue, valueControlled]
   );
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const setOpen = useCallback(
     (next: boolean) => {
@@ -195,14 +211,43 @@ export function Select({
   }, [open, setOpen]);
 
   useEffect(() => {
+    if (open) return;
+    setSearchQuery("");
+    setIsSearchFocused(false);
+  }, [open]);
+
+  const filteredOptions = useMemo(() => filterOptions(options, searchQuery), [options, searchQuery]);
+
+  const groupedOptions = useMemo(
+    () =>
+      groups
+        .map((group) => ({
+          ...group,
+          options: filteredOptions.filter((option) => option.groupId === group.id),
+        }))
+        .filter((group) => group.options.length > 0),
+    [filteredOptions, groups]
+  );
+
+  const ungroupedOptions = useMemo(
+    () => filteredOptions.filter((option) => !option.groupId || !groups.some((group) => group.id === option.groupId)),
+    [filteredOptions, groups]
+  );
+
+  const visibleOptions = useMemo(
+    () => [...groupedOptions.flatMap((group) => group.options), ...ungroupedOptions],
+    [groupedOptions, ungroupedOptions]
+  );
+
+  useEffect(() => {
     if (!open || options.length === 0) return;
-    const selectedIndex = options.findIndex((option) => selectedValues.includes(option.value) && !option.disabled);
+    const selectedIndex = visibleOptions.findIndex((option) => selectedValues.includes(option.value) && !option.disabled);
     if (selectedIndex >= 0) {
       setActiveIndex(selectedIndex);
       return;
     }
-    setActiveIndex(firstEnabledIndex(options));
-  }, [open, options, selectedValues]);
+    setActiveIndex(firstEnabledIndex(visibleOptions));
+  }, [open, selectedValues, visibleOptions]);
 
   const disabled = state === "disabled";
   const dataState = mapState(state, readOnly, disabled);
@@ -236,7 +281,7 @@ export function Select({
 
   const onControlKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (readOnly || disabled) return;
-    if (!options.length) {
+    if (!visibleOptions.length) {
       if (e.key === " " || e.key === "Enter") {
         e.preventDefault();
         setOpen(!open);
@@ -250,7 +295,9 @@ export function Select({
         setOpen(true);
         return;
       }
-      setActiveIndex((prev) => moveEnabledIndex(options, prev < 0 ? firstEnabledIndex(options) : prev, 1));
+      setActiveIndex((prev) =>
+        moveEnabledIndex(visibleOptions, prev < 0 ? firstEnabledIndex(visibleOptions) : prev, 1)
+      );
       return;
     }
     if (e.key === "ArrowUp") {
@@ -259,17 +306,19 @@ export function Select({
         setOpen(true);
         return;
       }
-      setActiveIndex((prev) => moveEnabledIndex(options, prev < 0 ? firstEnabledIndex(options) : prev, -1));
+      setActiveIndex((prev) =>
+        moveEnabledIndex(visibleOptions, prev < 0 ? firstEnabledIndex(visibleOptions) : prev, -1)
+      );
       return;
     }
     if (e.key === "Home") {
       e.preventDefault();
-      setActiveIndex(findBoundaryEnabledIndex(options, true));
+      setActiveIndex(findBoundaryEnabledIndex(visibleOptions, true));
       return;
     }
     if (e.key === "End") {
       e.preventDefault();
-      setActiveIndex(findBoundaryEnabledIndex(options, false));
+      setActiveIndex(findBoundaryEnabledIndex(visibleOptions, false));
       return;
     }
     if (e.key === " " || e.key === "Enter") {
@@ -278,11 +327,53 @@ export function Select({
         setOpen(true);
         return;
       }
-      const active = options[activeIndex];
+      const active = visibleOptions[activeIndex];
       if (active) onSelectValue(active);
       return;
     }
     if (e.key === "Escape") setOpen(false);
+  };
+
+  const onSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((prev) =>
+        moveEnabledIndex(visibleOptions, prev < 0 ? firstEnabledIndex(visibleOptions) : prev, 1)
+      );
+      return;
+    }
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((prev) =>
+        moveEnabledIndex(visibleOptions, prev < 0 ? firstEnabledIndex(visibleOptions) : prev, -1)
+      );
+      return;
+    }
+    if (event.key === "Home") {
+      event.preventDefault();
+      setActiveIndex(findBoundaryEnabledIndex(visibleOptions, true));
+      return;
+    }
+    if (event.key === "End") {
+      event.preventDefault();
+      setActiveIndex(findBoundaryEnabledIndex(visibleOptions, false));
+      return;
+    }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const fallbackIndex = firstEnabledIndex(visibleOptions);
+      const active = visibleOptions[activeIndex >= 0 ? activeIndex : fallbackIndex];
+      if (active) onSelectValue(active);
+      return;
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      if (searchQuery.length > 0) {
+        setSearchQuery("");
+        return;
+      }
+      setOpen(false);
+    }
   };
 
   const onClearClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -294,25 +385,12 @@ export function Select({
   };
 
   const showClear = Boolean(isClearable && open && (hasListbox ? selectedValues.length > 0 : Boolean(onClear)));
-  const activeOptionId = activeIndex >= 0 ? `${controlId}-option-${options[activeIndex]?.id}` : undefined;
+  const activeOptionId = activeIndex >= 0 ? `${controlId}-option-${visibleOptions[activeIndex]?.id}` : undefined;
   const rootClass = ["g-select", className].filter(Boolean).join(" ");
-  const groupedOptions = useMemo(
-    () =>
-      groups
-        .map((group) => ({
-          ...group,
-          options: options.filter((option) => option.groupId === group.id),
-        }))
-        .filter((group) => group.options.length > 0),
-    [groups, options]
-  );
-  const ungroupedOptions = useMemo(
-    () => options.filter((option) => !option.groupId || !groups.some((group) => group.id === option.groupId)),
-    [groups, options]
-  );
   const shouldRenderDefaultValue = hasListbox && (children === null || children === undefined);
   const hasHelperText = helperText !== undefined && helperText !== null && helperText !== "";
   const hasErrorText = errorText !== undefined && errorText !== null && errorText !== "";
+  const showSearch = isSearchable && open && hasListbox;
   const describedBy = [hasErrorText ? errorTextId : null, hasHelperText ? helperTextId : null]
     .filter(Boolean)
     .join(" ");
@@ -323,6 +401,7 @@ export function Select({
       className={rootClass}
       data-state={dataState}
       data-size={size}
+      data-search-focused={isSearchFocused ? "true" : "false"}
       data-open={open ? "true" : "false"}
       data-testid={dataTestId}
     >
@@ -363,13 +442,46 @@ export function Select({
         ) : null}
       </div>
 
+      {hasErrorText ? (
+        <p id={errorTextId} className="g-select__helper g-select__helper--error">
+          {errorText}
+        </p>
+      ) : null}
+      {hasHelperText ? (
+        <p id={helperTextId} className="g-select__helper">
+          {helperText}
+        </p>
+      ) : null}
+
       {open && hasListbox ? (
-        <div id={listboxId} className="g-select-listbox" role="listbox" aria-multiselectable={isMultiple || undefined}>
+        <div
+          id={listboxId}
+          className="g-select-listbox"
+          role="listbox"
+          aria-multiselectable={isMultiple || undefined}
+          onMouseLeave={() => setActiveIndex(-1)}
+        >
+          {showSearch ? (
+            <div className="g-select-listbox__search">
+              <SearchInput
+                value={searchQuery}
+                onChange={setSearchQuery}
+                onClear={() => setSearchQuery("")}
+                autoFocus
+                disabled={isDisabled}
+                placeholder={searchPlaceholder}
+                ariaLabel="Search options"
+                onKeyDown={onSearchKeyDown}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+              />
+            </div>
+          ) : null}
           {groupedOptions.map((group) => (
             <div key={group.id} role="group" aria-label={group.label} className="g-select-listbox__group">
               <div className="g-select-listbox__group-label">{group.label}</div>
               {group.options.map((option) => {
-                const optionIndex = options.findIndex((item) => item.id === option.id);
+                const optionIndex = visibleOptions.findIndex((item) => item.id === option.id);
                 const isSelected = selectedValues.includes(option.value);
                 const isActive = optionIndex === activeIndex;
                 return (
@@ -384,6 +496,7 @@ export function Select({
                     data-disabled={option.disabled ? "true" : "false"}
                     className="g-select-option"
                     onMouseEnter={() => setActiveIndex(optionIndex)}
+                    onMouseLeave={() => setActiveIndex(-1)}
                     onClick={() => onSelectValue(option)}
                   >
                     {renderOptionContent(option, size, hasLeading)}
@@ -398,7 +511,7 @@ export function Select({
             </div>
           ))}
           {ungroupedOptions.map((option) => {
-            const optionIndex = options.findIndex((item) => item.id === option.id);
+            const optionIndex = visibleOptions.findIndex((item) => item.id === option.id);
             const isSelected = selectedValues.includes(option.value);
             const isActive = optionIndex === activeIndex;
             return (
@@ -413,6 +526,7 @@ export function Select({
                 data-disabled={option.disabled ? "true" : "false"}
                 className="g-select-option"
                 onMouseEnter={() => setActiveIndex(optionIndex)}
+                onMouseLeave={() => setActiveIndex(-1)}
                 onClick={() => onSelectValue(option)}
               >
                 {renderOptionContent(option, size, hasLeading)}
@@ -424,18 +538,8 @@ export function Select({
               </div>
             );
           })}
+          {visibleOptions.length === 0 ? <div className="g-select-listbox__empty">{searchEmptyText}</div> : null}
         </div>
-      ) : null}
-
-      {hasErrorText ? (
-        <p id={errorTextId} className="g-select__helper g-select__helper--error">
-          {errorText}
-        </p>
-      ) : null}
-      {hasHelperText ? (
-        <p id={helperTextId} className="g-select__helper">
-          {helperText}
-        </p>
       ) : null}
     </div>
   );

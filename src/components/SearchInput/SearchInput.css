@@ -1,0 +1,83 @@
+.g-search-input {
+  display: flex;
+  align-items: center;
+  gap: var(--g-space-8);
+  min-height: var(--g-size-control-compact);
+  padding: 0 var(--g-space-12);
+  border: var(--g-border-width-default) solid var(--g-color-border-default);
+  border-radius: var(--g-radius-md);
+  background: var(--g-color-bg-neutral-lowest-default);
+  color: var(--g-color-text-primary);
+}
+
+.g-search-input:hover:not([data-state="focus"]):not([data-state="active"]):not([data-state="disabled"]),
+.g-search-input[data-state="hover"] {
+  background: var(--g-color-bg-neutral-lowest-hover);
+}
+
+.g-search-input[data-state="focus"],
+.g-search-input[data-state="focus"] {
+  border-color: var(--g-color-border-active);
+  outline-offset: 0;
+  outline: none;
+}
+
+.g-search-input[data-state="active"] {
+  border-color: var(--g-color-border-active);
+  outline: none;
+}
+
+.g-search-input[data-state="disabled"] {
+  cursor: not-allowed;
+  background: var(--g-color-bg-disabled);
+  color: var(--g-color-text-disabled);
+  border-color: var(--g-color-border-disabled);
+}
+
+.g-search-input__icon {
+  font-size: var(--x-font-size-20);
+  line-height: 1;
+  color: var(--g-color-icon-secondary);
+  flex-shrink: 0;
+}
+
+.g-search-input__field {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: var(--g-text-s-compact-font-weight) var(--g-text-s-compact-font-size) /
+    var(--g-text-s-compact-line-height) var(--g-text-s-compact-font-family);
+  letter-spacing: var(--g-text-s-compact-letter-spacing);
+}
+
+.g-search-input__field::placeholder {
+  color: var(--g-color-text-secondary);
+}
+
+.g-search-input__field:disabled {
+  cursor: not-allowed;
+}
+
+.g-search-input__clear {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--g-color-icon-secondary);
+  font-size: var(--x-font-size-20);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.g-search-input[data-state="disabled"] .g-search-input__icon,
+.g-search-input[data-state="disabled"] .g-search-input__clear {
+  color: var(--g-color-icon-disabled);
+}
